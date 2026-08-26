@@ -1,0 +1,35 @@
+# Pasos de build para CodeBuild (usado por el modulo cicd)
+#
+# Variables de entorno (definidas en el proyecto de CodeBuild, ver modulo cicd):
+#   AWS_ACCOUNT_ID, AWS_DEFAULT_REGION, REPOSITORY_URI, CONTAINER_NAME
+#
+# Nota: no usamos "cd" entre fases. El contexto del build se pasa como ultimo
+# argumento de docker build, y imagedefinitions.json se escribe siempre en
+# $CODEBUILD_SRC_DIR, que es el base directory de los artifacts.
+
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logueando en ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
+      - echo "Tag de la imagen -> $IMAGE_TAG"
+  build:
+    commands:
+      - echo Build de la imagen Docker...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -t $REPOSITORY_URI:latest "$CODEBUILD_SRC_DIR/lab3-app"
+  post_build:
+    commands:
+      - echo Pusheando la imagen a ECR...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
+      - echo Generando imagedefinitions.json para la accion de deploy a ECS...
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPOSITORY_URI:$IMAGE_TAG" > "$CODEBUILD_SRC_DIR/imagedefinitions.json"
+      - cat "$CODEBUILD_SRC_DIR/imagedefinitions.json"
+
+artifacts:
+  base-directory: $CODEBUILD_SRC_DIR
+  files:
+    - imagedefinitions.json

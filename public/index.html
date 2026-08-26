@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sovngarde Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Cielo de Sovngarde: foto de la aurora + capas animadas encima -->
+  <div class="sky" aria-hidden="true">
+    <div class="bg-photo"></div>
+    <div class="stars"></div>
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="fog"></div>
+  </div>
+
+  <!-- Dragon en pixel art con el estandarte colgando de la cola -->
+  <div class="dragon-flight" aria-hidden="true">
+    <div class="dragon-rig">
+      <svg class="dragon" viewBox="-30 0 94 32" shape-rendering="crispEdges" role="presentation">
+        <rect class="dragon-hit" x="0" y="2" width="62" height="28" />
+        <g class="dragon-body">
+          <rect x="6"  y="14" width="6" height="4" />
+          <rect x="4"  y="15" width="2" height="2" />
+          <rect x="12" y="13" width="10" height="6" />
+          <rect x="22" y="12" width="12" height="8" />
+          <rect x="34" y="14" width="8" height="5" />
+          <rect x="42" y="15" width="6" height="4" />
+          <rect x="48" y="16" width="6" height="3" />
+          <rect x="54" y="17" width="5" height="2" />
+          <rect x="10" y="12" width="3" height="2" />
+          <rect x="16" y="10" width="3" height="3" />
+        </g>
+        <g class="dragon-eye"><rect x="8" y="15" width="1" height="1" /></g>
+
+        <!-- Llamarada: tres fotogramas que alternan mientras dura el soplido -->
+        <g class="fire fire-a">
+          <rect x="-2" y="15" width="5" height="3" class="fl-core" />
+          <rect x="-8" y="14" width="6" height="5" class="fl-core" />
+          <rect x="-15" y="13" width="7" height="7" class="fl-mid" />
+          <rect x="-22" y="12" width="7" height="9" class="fl-mid" />
+          <rect x="-28" y="11" width="6" height="11" class="fl-out" />
+          <rect x="-26" y="9"  width="3" height="2"  class="fl-out" />
+          <rect x="-25" y="22" width="3" height="2"  class="fl-out" />
+        </g>
+        <g class="fire fire-b">
+          <rect x="-2" y="15" width="5" height="3" class="fl-core" />
+          <rect x="-9" y="15" width="7" height="4" class="fl-core" />
+          <rect x="-16" y="13" width="7" height="8" class="fl-mid" />
+          <rect x="-24" y="11" width="8" height="11" class="fl-mid" />
+          <rect x="-29" y="10" width="5" height="13" class="fl-out" />
+          <rect x="-27" y="7"  width="3" height="3"  class="fl-out" />
+          <rect x="-26" y="23" width="4" height="2"  class="fl-out" />
+        </g>
+        <g class="fire fire-c">
+          <rect x="-2" y="16" width="4" height="2" class="fl-core" />
+          <rect x="-7" y="14" width="5" height="5" class="fl-core" />
+          <rect x="-14" y="12" width="7" height="8" class="fl-mid" />
+          <rect x="-21" y="13" width="7" height="8" class="fl-mid" />
+          <rect x="-26" y="12" width="5" height="10" class="fl-out" />
+          <rect x="-24" y="9"  width="2" height="3"  class="fl-out" />
+          <rect x="-23" y="22" width="3" height="3"  class="fl-out" />
+        </g>
+        <g class="wing wing-up">
+          <rect x="24" y="4"  width="10" height="3" />
+          <rect x="22" y="7"  width="12" height="3" />
+          <rect x="24" y="10" width="8"  height="2" />
+        </g>
+        <g class="wing wing-down">
+          <rect x="24" y="20" width="8"  height="2" />
+          <rect x="22" y="22" width="12" height="3" />
+          <rect x="24" y="25" width="10" height="3" />
+        </g>
+      </svg>
+
+      <div class="banner">
+        <span class="banner-rope banner-rope-a"></span>
+        <span class="banner-rope banner-rope-b"></span>
+        <div class="banner-board">
+          <span class="banner-fallback">teracloud</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="brand">
+    <h1 class="brand-name">Sovngarde<span>Notes</span></h1>
+    <p class="brand-tag">El salon de los tomos recordados</p>
+  </header>
+
+  <div class="search-wrap">
+    <label class="search-label" for="search">Busca entre los tomos</label>
+    <div class="search-field">
+      <input id="search" type="search" autocomplete="off" placeholder="Un titulo, un autor, una palabra..." />
+    </div>
+    <p class="search-hint" id="search-hint" aria-live="polite"></p>
+  </div>
+
+  <main class="hall">
+
+    <aside class="shelf shelf-mine">
+      <h2 class="shelf-title">Tus tomos</h2>
+      <div class="shelf-body" id="shelf-mine"></div>
+      <p class="shelf-count" id="count-mine">0</p>
+    </aside>
+
+    <!-- Ronda de tomos: escena 3D con los modelos GLB -->
+    <section class="stage" aria-label="Ronda de tomos">
+      <canvas id="ring-canvas"></canvas>
+      <p class="stage-empty" id="stage-empty">La ronda esta vacia. Escribe el primer tomo.</p>
+      <p class="stage-note" id="stage-note" aria-live="polite"></p>
+    </section>
+
+    <aside class="shelf shelf-others">
+      <h2 class="shelf-title">Tomos de otros</h2>
+      <div class="shelf-body" id="shelf-others"></div>
+      <p class="shelf-count" id="count-others">0</p>
+    </aside>
+
+  </main>
+
+  <section class="compose">
+    <p class="compose-prompt">¿Que nota quieres escribir viajero?</p>
+    <form id="nota-form" class="compose-form">
+      <input id="titulo" type="text" maxlength="120" required
+             class="compose-title" placeholder="Titulo del tomo" />
+      <textarea id="texto" maxlength="1000" required
+                placeholder="Deja aqui tu relato..."></textarea>
+      <button type="submit" class="compose-btn">Grabar el tomo</button>
+    </form>
+    <p class="compose-status" id="status-msg" aria-live="polite"></p>
+  </section>
+
+  <a class="chest" id="chest"
+     href="https://github.com/maximocarbonetti/Teracloud-Lab3-Nico-Maxi"
+     target="_blank" rel="noopener noreferrer"
+     aria-label="Abrir el repositorio del proyecto en GitHub">
+    <svg class="chest-art" viewBox="0 0 48 40" shape-rendering="crispEdges" aria-hidden="true">
+      <g class="chest-lid">
+        <rect x="4"  y="10" width="40" height="10" class="wood" />
+        <rect x="4"  y="10" width="40" height="2"  class="iron" />
+        <rect x="12" y="10" width="4"  height="10" class="iron" />
+        <rect x="32" y="10" width="4"  height="10" class="iron" />
+      </g>
+      <g class="chest-base">
+        <rect x="4"  y="20" width="40" height="16" class="wood" />
+        <rect x="4"  y="34" width="40" height="2"  class="iron" />
+        <rect x="12" y="20" width="4"  height="16" class="iron" />
+        <rect x="32" y="20" width="4"  height="16" class="iron" />
+        <rect x="22" y="22" width="4"  height="5"  class="gold" />
+      </g>
+    </svg>
+    <svg class="chest-mark" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+    </svg>
+  </a>
+
+  <div class="reader" id="reader" hidden>
+    <div class="reader-veil" data-close></div>
+    <div class="reader-book" role="dialog" aria-modal="true" aria-labelledby="reader-title">
+      <div class="reader-page reader-page-left">
+        <h3 class="reader-tome-title" id="reader-title"></h3>
+        <p class="reader-eyebrow">Escrito por</p>
+        <p class="reader-author"></p>
+        <p class="reader-date"></p>
+        <p class="reader-id"></p>
+        <button type="button" class="reader-burn" hidden></button>
+      </div>
+      <div class="reader-spine"></div>
+      <div class="reader-page reader-page-right">
+        <p class="reader-text"></p>
+      </div>
+      <button class="reader-close" data-close aria-label="Cerrar el tomo">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="gate" id="gate" hidden>
+    <div class="gate-card">
+      <h2>Antes de entrar al salon</h2>
+      <p>Los tomos llevan el nombre de quien los escribe. ¿Como te llamas, viajero?</p>
+      <form id="gate-form">
+        <input id="gate-name" type="text" maxlength="80" required autocomplete="name"
+               placeholder="Tu nombre" />
+        <button type="submit">Cruzar el puente</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
